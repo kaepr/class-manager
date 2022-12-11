@@ -18,25 +18,50 @@ export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
+  const age = formData.get("age");
   const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
+
+  if (!age) {
+    return json({
+      errors: {
+        email: null,
+        password: null,
+        age: "Enter valid age",
+      },
+      status: 400,
+    });
+  }
+
+  if (typeof age !== "string") {
+    return json({
+      errors: {
+        email: null,
+        password: null,
+        age: "Enter valid age",
+      },
+      status: 400,
+    });
+  }
+
+  const ageNumber = parseInt(age);
 
   if (!validateEmail(email)) {
     return json(
-      { errors: { email: "Email is invalid", password: null } },
+      { errors: { email: "Email is invalid", password: null, age: null } },
       { status: 400 }
     );
   }
 
   if (typeof password !== "string" || password.length === 0) {
     return json(
-      { errors: { email: null, password: "Password is required" } },
+      { errors: { email: null, password: "Password is required", age: null } },
       { status: 400 }
     );
   }
 
   if (password.length < 8) {
     return json(
-      { errors: { email: null, password: "Password is too short" } },
+      { errors: { email: null, password: "Password is too short", age: null } },
       { status: 400 }
     );
   }
@@ -48,13 +73,14 @@ export async function action({ request }: ActionArgs) {
         errors: {
           email: "A user already exists with this email",
           password: null,
+          age: null,
         },
       },
       { status: 400 }
     );
   }
 
-  const user = await createUser(email, password);
+  const user = await createUser(email, password, ageNumber);
 
   return createUserSession({
     request,
@@ -76,12 +102,15 @@ export default function Join() {
   const actionData = useActionData<typeof action>();
   const emailRef = React.useRef<HTMLInputElement>(null);
   const passwordRef = React.useRef<HTMLInputElement>(null);
+  const ageRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     if (actionData?.errors?.email) {
       emailRef.current?.focus();
     } else if (actionData?.errors?.password) {
       passwordRef.current?.focus();
+    } else if (actionData?.errors?.age) {
+      ageRef.current?.focus();
     }
   }, [actionData]);
 
@@ -138,6 +167,33 @@ export default function Join() {
               {actionData?.errors?.password && (
                 <div className="pt-1 text-red-700" id="password-error">
                   {actionData.errors.password}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="age"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Age
+            </label>
+            <div className="mt-1">
+              <input
+                id="age"
+                ref={ageRef}
+                name="age"
+                type="number"
+                min="1"
+                autoComplete="age"
+                aria-invalid={actionData?.errors?.age ? true : undefined}
+                aria-describedby="age-error"
+                className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
+              />
+              {actionData?.errors?.age && (
+                <div className="pt-1 text-red-700" id="age-error">
+                  {actionData.errors.age}
                 </div>
               )}
             </div>
