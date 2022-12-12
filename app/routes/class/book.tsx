@@ -6,11 +6,29 @@ import {
 } from "~/models/booking.server";
 
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
-import { requireUserId } from "~/session.server";
+import { getUser, requireUserId } from "~/session.server";
 
 export async function action({ request }: ActionArgs) {
   const userId = await requireUserId(request);
   const isBooked = await isMonthBooked(userId);
+
+  const user = await getUser(request);
+
+  if (!user) {
+    return redirect("/");
+  }
+
+  if (user.age < 18 || user.age > 65) {
+    return json(
+      {
+        errors: {
+          age: "Need to be between 18 and 65 to register",
+          batch_id: "",
+        },
+      },
+      { status: 400 }
+    );
+  }
 
   if (isBooked) {
     throw new Error("You have already booked for this month");
@@ -24,6 +42,7 @@ export async function action({ request }: ActionArgs) {
       {
         errors: {
           batch_id: "Batch is required",
+          age: "",
         },
       },
       { status: 400 }
@@ -68,6 +87,12 @@ export default function CreateBookingPage() {
         {actionData?.errors?.batch_id && (
           <div className="pt-1 text-red-700" id="body-error">
             {actionData.errors.batch_id}
+          </div>
+        )}
+
+        {actionData?.errors?.age && (
+          <div className="pt-1 text-red-700" id="body-error">
+            {actionData.errors.age}
           </div>
         )}
 
