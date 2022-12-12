@@ -32,6 +32,17 @@ There is a `Users` and `Password` table responsible for handling user accounts u
 - The user signs up for specific months, i.e. the directly in the month they are paying. For e.g. if they are buying on 30 Jan, then even though they are paying full amount, their susbscription lasts only till 31 Jan. From February they have to pay again.
 - Timezone is set to be UTC.
 
+Checks related to age verification, and similar validations like name length, password length etc have been implemented.
+If the user does not fall in the specified range, then they would fail to register.
+
+`Transactions` which record payment history, and `Booking` which record class history are two separate tables, but they have a `1-1` relation between them as each booking points to one unique transaction.
+
+`Batch` stores the timings which are allowed. Currently four different slots are given, as per the problem statement but that can be changed accordingly.
+
+A user starts by selecting which batch they want, and then proceed to create a new `Booking`. As payment is assumed to correct, we proceed to create a new transaction and booking in one postgres transaction, so that it becomes one atomic operation. This is important as transactions and bookings are linked to one another, and must be consistent with each other.
+
+`Booking` has a `created_at` timestamp. This denotes in which month did the transaction occur. This also specifies which
+
 ## Screenshots
 
 ![Image 1](./img_1.png)
