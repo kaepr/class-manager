@@ -1,6 +1,6 @@
 # Class Manager
 
-Application built using React Remix for Coding Assignment.
+Application built using React Remix for Coding Assignment. [Deployed Link](https://class-manager.fly.dev/)
 
 ## Tech Stack
 
@@ -14,6 +14,7 @@ The project was scaffolded using [Remix blues stack](https://github.com/remix-ru
 ## Run Instructions
 
 ```
+gh repo clone standmarsh/class-manager
 npm install
 npm run docker
 npm run setup
