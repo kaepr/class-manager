@@ -1,8 +1,20 @@
-import { Form, Link, Outlet } from "@remix-run/react";
+import { Form, Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
 import { useUser } from "~/utils";
+
+import type { LoaderArgs } from "@remix-run/node";
+import { requireUserId } from "~/session.server";
+import { getBookings } from "~/models/booking.server";
+import { json } from "@remix-run/node";
+
+export async function loader({ request }: LoaderArgs) {
+  const userId = await requireUserId(request);
+  const bookings = await getBookings(userId);
+  return json({ bookings });
+}
 
 export default function ClassPage() {
   const user = useUser();
+  const { bookings } = useLoaderData<typeof loader>();
 
   return (
     <div className="flex h-full min-h-screen flex-col">
@@ -29,7 +41,33 @@ export default function ClassPage() {
 
           <hr />
 
+          {bookings.length === 0 ? (
+            <p className="p-4">No bookings made yet</p>
+          ) : (
+            <ol>
+              {bookings.map((booking) => {
+                return (
+                  <li key={booking.id}>
+                    <NavLink
+                      className={({ isActive }) =>
+                        `block border-b p-4 text-xl ${
+                          isActive ? "bg-white" : ""
+                        }`
+                      }
+                      to={booking.id}
+                    >
+                      {new Date(booking.created_at).toLocaleString("default", {
+                        month: "long",
+                      })}
+                    </NavLink>
+                  </li>
+                );
+              })}
+            </ol>
+          )}
+
           {/* list previous bookings */}
+          {bookings.map((booking) => {})}
         </div>
         <div className="flex-1 p-6">
           <Outlet />

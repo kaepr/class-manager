@@ -1,12 +1,22 @@
 import { ActionArgs, LoaderArgs, redirect, json } from "@remix-run/node";
-import { createBooking, getBatches } from "~/models/booking.server";
+import {
+  createBooking,
+  getBatches,
+  isMonthBooked,
+} from "~/models/booking.server";
 
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { requireUserId } from "~/session.server";
 
 export async function action({ request }: ActionArgs) {
-  const formData = await request.formData();
   const userId = await requireUserId(request);
+  const isBooked = await isMonthBooked(userId);
+
+  if (isBooked) {
+    throw new Error("You have already booked for this month");
+  }
+
+  const formData = await request.formData();
   const batchId = formData.get("batch_id");
 
   if (typeof batchId !== "string" || batchId.length === 0) {
@@ -36,7 +46,6 @@ export default function CreateBookingPage() {
   return (
     <div>
       Create a new booking for this month
-      <div className="flex"></div>
       <Form method="post">
         {data.batches.map((batch) => {
           return (

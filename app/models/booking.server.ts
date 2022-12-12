@@ -32,8 +32,11 @@ export function getBatches() {
   return prisma.batch.findMany();
 }
 
-export async function isMonthBooked() {
+export async function isMonthBooked(userId: string) {
   const booking = await prisma.booking.findFirst({
+    where: {
+      user_id: userId,
+    },
     orderBy: [
       {
         created_at: "desc",
@@ -57,6 +60,29 @@ export function getBookings(userId: string) {
   return prisma.booking.findMany({
     where: {
       user_id: userId,
+    },
+    orderBy: {
+      created_at: "desc",
+    },
+  });
+}
+
+export function getBooking(bookingId: string) {
+  return prisma.booking.findFirst({
+    where: {
+      id: bookingId,
+    },
+    select: {
+      batch: {
+        select: {
+          id: true,
+          end_time: true,
+          start_time: true,
+        },
+      },
+      created_at: true,
+      id: true,
+      transaction_id: true,
     },
   });
 }
