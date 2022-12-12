@@ -9,7 +9,7 @@ Application built using React Remix for Coding Assignment.
 - Docker: Docker is used for the container. Docker compose is used for ease of deployment.
 - Prisma: Is an ORM for Node.js. Helps achieve end to end type safety across the project.
 
-The project was scaffolded using [Remix blues stack](https://github.com/remix-run/blues-stack). This generates the boilerplate necessary for docker files, database deployment etc. This helped me focus on directly solving the problem.
+The project was scaffolded using [Remix blues stack](https://github.com/remix-run/blues-stack). This generates the boilerplate necessary for docker files, database deployment etc. This helped me focus on directly solving the problem. The application can be easily deployed as it uses docker. Currently fly.io was used for deployment. The website is also fully server side rendered, thus making it extremely fast and responsive.
 
 ## Run Instructions
 
@@ -41,7 +41,14 @@ If the user does not fall in the specified range, then they would fail to regist
 
 A user starts by selecting which batch they want, and then proceed to create a new `Booking`. As payment is assumed to correct, we proceed to create a new transaction and booking in one postgres transaction, so that it becomes one atomic operation. This is important as transactions and bookings are linked to one another, and must be consistent with each other.
 
-`Booking` has a `created_at` timestamp. This denotes in which month did the transaction occur. This also specifies for which month we have paid for, and is used further.
+`Booking` has a `created_at` timestamp. This denotes in which month did the transaction occur. This also specifies for which month we have paid for, and is used further to check if someone has already paid for that month or not. ( `app/models/booking.server.ts` file).
+
+As the user cannot create a new booking for the same month, thus they are unable to change their booking in the same month.
+In the next month, they can create a new booking and hence can choose a separate slot then.
+
+The database utilities are present in the `appl/models` folder.
+
+Due to the nature of architecture of React Remix, the POST, GET requests API are present in the react components itself. ( `routes/class` folders and others).
 
 ## Screenshots
 

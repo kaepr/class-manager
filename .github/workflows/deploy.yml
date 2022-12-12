@@ -112,7 +112,7 @@ jobs:
       - name: 🛠 Setup Database
         run: npx prisma migrate reset --force
 
-      -name: Seed
+      - name: Seed
         run: npx prisma db seed
 
       - name: ⚙️ Build
