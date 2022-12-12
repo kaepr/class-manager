@@ -1,6 +1,5 @@
 import type { User, Transaction, Batch, Booking } from "@prisma/client";
 
-import cuid from "cuid";
 import { prisma } from "~/db.server";
 
 export async function createBooking({
@@ -31,4 +30,33 @@ export async function createBooking({
 
 export function getBatches() {
   return prisma.batch.findMany();
+}
+
+export async function isMonthBooked() {
+  const booking = await prisma.booking.findFirst({
+    orderBy: [
+      {
+        created_at: "desc",
+      },
+    ],
+  });
+
+  if (!booking) {
+    return false;
+  }
+
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+  const bookingMonth = booking.created_at.getMonth();
+  const bookingYear = booking.created_at.getFullYear();
+
+  return currentMonth === bookingMonth && currentYear === bookingYear;
+}
+
+export function getBookings(userId: string) {
+  return prisma.booking.findMany({
+    where: {
+      user_id: userId,
+    },
+  });
 }
