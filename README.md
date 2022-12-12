@@ -11,9 +11,26 @@ Application built using React Remix for Coding Assignment.
 
 The project was scaffolded using [Remix blues stack](https://github.com/remix-run/blues-stack). This generates the boilerplate necessary for docker files, database deployment etc. This helped me focus on directly solving the problem.
 
-## Schema
+## Run Instructions
+
+```
+npm install
+npm run docker
+npm run setup
+npm run build
+npm run dev
+```
+
+## Schema and Solution
 
 ![ER Diagram](./schema.png)
+
+There is a `Users` and `Password` table responsible for handling user accounts using a `email` and `password` combination. Email uniquely identifies the user.
+
+### Assumptions
+
+- The user signs up for specific months, i.e. the directly in the month they are paying. For e.g. if they are buying on 30 Jan, then even though they are paying full amount, their susbscription lasts only till 31 Jan. From February they have to pay again.
+- Timezone is set to be UTC.
 
 ## Screenshots
 
