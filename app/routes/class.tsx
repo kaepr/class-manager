@@ -3,18 +3,19 @@ import { useUser } from "~/utils";
 
 import type { LoaderArgs } from "@remix-run/node";
 import { requireUserId } from "~/session.server";
-import { getBookings } from "~/models/booking.server";
+import { getBookings, isMonthBooked } from "~/models/booking.server";
 import { json } from "@remix-run/node";
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request);
+  const isBooked = await isMonthBooked(userId);
   const bookings = await getBookings(userId);
-  return json({ bookings });
+  return json({ bookings, isBooked });
 }
 
 export default function ClassPage() {
   const user = useUser();
-  const { bookings } = useLoaderData<typeof loader>();
+  const { bookings, isBooked } = useLoaderData<typeof loader>();
 
   return (
     <div className="flex h-full min-h-screen flex-col">
@@ -35,10 +36,13 @@ export default function ClassPage() {
       </header>
       <main className="flex h-full">
         <div className="h-full w-80 border-r bg-gray-50">
-          <Link to="book" className="block p-4 text-xl text-blue-500">
-            + New Booking
-          </Link>
-
+          {isBooked ? (
+            <p className="p-4">Already booked for this month</p>
+          ) : (
+            <Link to="book" className="block p-4 text-xl text-blue-500">
+              + New Booking
+            </Link>
+          )}
           <hr />
 
           {bookings.length === 0 ? (
@@ -65,9 +69,6 @@ export default function ClassPage() {
               })}
             </ol>
           )}
-
-          {/* list previous bookings */}
-          {bookings.map((booking) => {})}
         </div>
         <div className="flex-1 p-6">
           <Outlet />
