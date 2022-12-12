@@ -1,0 +1,56 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id String [pk]
+  email String [unique, not null]
+  age Int [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  password Password
+  bookings Booking [not null]
+  Transaction Transaction [not null]
+}
+
+Table Transaction {
+  id String [pk]
+  created_at DateTime [default: `now()`, not null]
+  user User [not null]
+  user_id String [not null]
+  booking Booking
+}
+
+Table Booking {
+  id String [pk]
+  created_at DateTime [default: `now()`, not null]
+  user User
+  user_id String
+  transaction Transaction [not null]
+  transaction_id String [unique, not null]
+  batch Batch [not null]
+  batch_id String [not null]
+}
+
+Table Batch {
+  id String [pk]
+  start_time String [not null]
+  end_time String [not null]
+  booking Booking [not null]
+}
+
+Table Password {
+  hash String [not null]
+  user User [not null]
+  userId String [unique, not null]
+}
+
+Ref: Transaction.user_id > User.id
+
+Ref: Booking.user_id > User.id
+
+Ref: Booking.transaction_id - Transaction.id
+
+Ref: Booking.batch_id > Batch.id
+
+Ref: Password.userId - User.id [delete: Cascade]

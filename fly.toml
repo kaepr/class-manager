@@ -1,4 +1,4 @@
-app = "class-manager-5274"
+app = "class-manager"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = [ ]

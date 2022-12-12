@@ -11,6 +11,16 @@ Application built using React Remix for Coding Assignment.
 
 The project was scaffolded using [Remix blues stack](https://github.com/remix-run/blues-stack). This generates the boilerplate necessary for docker files, database deployment etc. This helped me focus on directly solving the problem.
 
+## Schema
+
+![ER Diagram](./schema.png)
+
+## Screenshots
+
+![Image 1](./img_1.png)
+![Image 2](./img_2.png)
+![Image 3](./img_3.png)
+
 ## Future Implementations
 
 One of the possible scalable solutions can be using Postgres triggers and stored procedures. Currently there is a manual check performed whether we have already booked for that month or not, but we can automate this process.
