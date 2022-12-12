@@ -8,20 +8,45 @@ generator client {
 }
 
 model User {
-    id    String @id @default(cuid())
-    email String @unique
-    age   Int
+    id          String        @id @default(cuid())
+    email       String        @unique
+    age         Int
+    created_at  DateTime      @default(now())
+    updated_at  DateTime      @updatedAt
+    password    Password?
+    bookings    Booking[]
+    Transaction Transaction[]
+    Note        Note[]
+}
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Transaction {
+    id         String   @id @default(cuid())
+    created_at DateTime @default(now())
+    user       User     @relation(fields: [user_id], references: [id])
+    user_id    String
+    booking    Booking?
+}
 
-    password Password?
-    notes    Note[]
+model Booking {
+    id             String      @id @default(cuid())
+    created_at     DateTime
+    user           User?       @relation(fields: [user_id], references: [id])
+    user_id        String?
+    transaction    Transaction @relation(fields: [transaction_id], references: [id])
+    transaction_id String      @unique
+    batch          Batch       @relation(fields: [batch_id], references: [id])
+    batch_id       String
+}
+
+model Batch {
+    id         String    @id @default(cuid())
+    start_time String
+    end_time   String
+    booking    Booking[]
 }
 
 model Password {
-    hash String
-
+    hash   String
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     userId String @unique
 }

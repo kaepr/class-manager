@@ -9,17 +9,12 @@ import {
   ScrollRestoration,
 } from "@remix-run/react";
 
-import { MantineProvider, createEmotionCache } from "@mantine/core";
-import { StylesPlaceholder } from "@mantine/remix";
-
 import { getUser } from "./session.server";
 import tailwindStylesheetUrl from "./styles/tailwind.css";
 
 export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: tailwindStylesheetUrl }];
 };
-
-createEmotionCache({ key: "mantine" });
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -35,20 +30,17 @@ export async function loader({ request }: LoaderArgs) {
 
 export default function App() {
   return (
-    <MantineProvider withGlobalStyles withNormalizeCSS>
-      <html lang="en" className="h-full">
-        <head>
-          <StylesPlaceholder />
-          <Meta />
-          <Links />
-        </head>
-        <body className="h-full">
-          <Outlet />
-          <ScrollRestoration />
-          <Scripts />
-          <LiveReload />
-        </body>
-      </html>
-    </MantineProvider>
+    <html lang="en" className="h-full">
+      <head>
+        <Meta />
+        <Links />
+      </head>
+      <body className="h-full">
+        <Outlet />
+        <ScrollRestoration />
+        <Scripts />
+        <LiveReload />
+      </body>
+    </html>
   );
 }
