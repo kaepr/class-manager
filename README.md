@@ -41,7 +41,7 @@ If the user does not fall in the specified range, then they would fail to regist
 
 A user starts by selecting which batch they want, and then proceed to create a new `Booking`. As payment is assumed to correct, we proceed to create a new transaction and booking in one postgres transaction, so that it becomes one atomic operation. This is important as transactions and bookings are linked to one another, and must be consistent with each other.
 
-`Booking` has a `created_at` timestamp. This denotes in which month did the transaction occur. This also specifies which
+`Booking` has a `created_at` timestamp. This denotes in which month did the transaction occur. This also specifies for which month we have paid for, and is used further.
 
 ## Screenshots
 
